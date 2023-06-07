@@ -60,6 +60,29 @@ async function run() {
             res.send(result)
         })
 
+        // create admin
+        app.put('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email }
+            const updatedDoc = {
+                $set: { role: 'admin' },
+            }
+            const result = await AllUsersCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+
+        })
+        // remove admin
+        app.put('/users/removeadmin/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email }
+            const updatedDoc = {
+                $set: { role: 'student' },
+            }
+            const result = await AllUsersCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+
+        })
+
         // delete a user 
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
