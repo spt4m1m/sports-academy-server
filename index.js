@@ -59,6 +59,13 @@ async function run() {
             const result = await AllUsersCollection.find().toArray();
             res.send(result)
         })
+        // get a user 
+        app.get('/users/single/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await AllUsersCollection.findOne(query);
+            res.send(result)
+        })
 
         // create admin
         app.put('/users/admin/:email', async (req, res) => {
