@@ -168,6 +168,17 @@ async function run() {
             res.send({ result })
         })
 
+        // get all class 
+        app.get('/classes', async (req, res) => {
+            const email = req.query.email;
+            let query = {};
+            if (email) {
+                query = { instructoremail: email }
+            }
+            const result = await AllClassCollection.find(query).toArray();
+            res.send(result)
+        })
+
 
     } finally {
 
