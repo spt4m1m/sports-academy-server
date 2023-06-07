@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const colors = require('colors');
 const path = require('path');
 require("dotenv").config();
@@ -57,6 +57,14 @@ async function run() {
         app.get('/users', async (req, res) => {
             const query = {};
             const result = await AllUsersCollection.find().toArray();
+            res.send(result)
+        })
+
+        // delete a user 
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await AllUsersCollection.deleteOne(query);
             res.send(result)
         })
 
