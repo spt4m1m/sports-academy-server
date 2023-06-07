@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const colors = require('colors');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 require("dotenv").config();
 const cors = require('cors');
@@ -10,6 +11,26 @@ const app = express();
 // middlewares 
 app.use(cors())
 app.use(express.json())
+const verifyJWT = (req, res, next) => {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).json({
+            error: true,
+            message: "Unauthorized access"
+        })
+    }
+    const token = authorization.split(' ')[1];
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                error: true,
+                message: "Unauthorized access"
+            })
+        }
+        req.decoded = decoded;
+    });
+    next();
+}
 
 
 // Database Connection 
@@ -35,6 +56,13 @@ async function run() {
         // database
         const AllUsersCollection = client.db("sportsacademydb").collection("Users");
 
+        // jwt
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.SECRET_TOKEN, { expiresIn: '3h' })
+            res.send({ token })
+        })
+
         // add a user to db 
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -54,7 +82,7 @@ async function run() {
         })
 
         // get all user 
-        app.get('/users', async (req, res) => {
+        app.get('/users', verifyJWT, async (req, res) => {
             const query = {};
             const result = await AllUsersCollection.find().toArray();
             res.send(result)
