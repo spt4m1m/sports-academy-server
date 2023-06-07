@@ -179,6 +179,27 @@ async function run() {
             res.send(result)
         })
 
+        // change class status 
+        app.put('/classes/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.query.status;
+            const filter = { _id: new ObjectId(id) };
+            let updatedDoc;
+            if (status == "approved") {
+                updatedDoc = {
+                    $set: { status: 'approved' },
+                }
+                const result = await AllClassCollection.updateOne(filter, updatedDoc);
+                return res.send({ result })
+            } else if (status == "deny") {
+                updatedDoc = {
+                    $set: { status: 'deny' },
+                }
+                const result = await AllClassCollection.updateOne(filter, updatedDoc);
+                return res.send({ result })
+            }
+        });
+
 
     } finally {
 
