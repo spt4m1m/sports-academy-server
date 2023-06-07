@@ -83,6 +83,29 @@ async function run() {
 
         })
 
+        // create instructor
+        app.put('/users/instructor/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email }
+            const updatedDoc = {
+                $set: { role: 'instructor' },
+            }
+            const result = await AllUsersCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+
+        })
+        // remove instructor
+        app.put('/users/removeinstructor/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email }
+            const updatedDoc = {
+                $set: { role: 'student' },
+            }
+            const result = await AllUsersCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+
+        })
+
         // delete a user 
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
