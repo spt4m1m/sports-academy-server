@@ -63,6 +63,17 @@ async function run() {
             res.send({ token })
         })
 
+        // admin verify 
+        const verifyAdmin = async (req, res, next) => {
+            const email = req.decoded.email;
+            const query = { email: email }
+            const user = await AllUsersCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
+
         // add a user to db 
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -82,7 +93,7 @@ async function run() {
         })
 
         // get all user 
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const query = {};
             const result = await AllUsersCollection.find().toArray();
             res.send(result)
