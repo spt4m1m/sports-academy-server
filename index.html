@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Academy Server</title>
+    <style>
+        div {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            height: 80vh;
+            font-size: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div p a {
+            text-decoration: none;
+            color: rgb(255, 0, 0);
+            font-weight: bold;
+        }
+
+        .dot-windmill {
+            position: relative;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #ff0000;
+            color: #ff0000;
+            transform-origin: 5px 15px;
+            animation: dot-windmill 2s infinite linear;
+        }
+
+        .dot-windmill::before,
+        .dot-windmill::after {
+            content: "";
+            display: inline-block;
+            position: absolute;
+        }
+
+        .dot-windmill::before {
+            left: -8.66254px;
+            top: 15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #00ff11;
+            color: #00ff11;
+        }
+
+        .dot-windmill::after {
+            left: 8.66254px;
+            top: 15px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #2f01ff;
+            color: #3001ff;
+        }
+
+        @keyframes dot-windmill {
+            0% {
+                transform: rotateZ(0deg) translate3d(0, 0, 0);
+            }
+
+            100% {
+                transform: rotateZ(720deg) translate3d(0, 0, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h2>Sports Academy Server Running</h2>
+        <div class="dot-windmill"></div>
+        <p>Developed by -- <a target="_blank" href="https://facebook.com/spt4m1m">SP Tamim</a></p>
+    </div>
+
+</body>
+
+</html>
