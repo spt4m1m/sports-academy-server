@@ -55,6 +55,7 @@ async function run() {
         console.log("Database Connected".yellow);
         // database
         const AllUsersCollection = client.db("sportsacademydb").collection("Users");
+        const AllClassCollection = client.db("sportsacademydb").collection("Classes");
 
         // jwt
         app.post('/jwt', (req, res) => {
@@ -158,6 +159,13 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const result = await AllUsersCollection.deleteOne(query);
             res.send(result)
+        })
+
+        // add a class in db 
+        app.post('/classes', async (req, res) => {
+            const data = req.body;
+            const result = await AllClassCollection.insertOne(data)
+            res.send({ result })
         })
 
 
