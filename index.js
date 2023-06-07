@@ -28,10 +28,32 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        client.connect();
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Database Connected".yellow);
+        // database
+        const AllUsersCollection = client.db("sportsacademydb").collection("Users");
+
+        // add a user to db 
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email };
+            const existingUser = await AllUsersCollection.findOne(query);
+            if (existingUser) {
+                res.status(200).json({
+                    status: "success",
+                    data: "user already exits"
+                })
+            }
+            const result = await AllUsersCollection.insertOne(user);
+            res.status(200).json({
+                status: "success",
+                data: result
+            })
+        })
+
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
