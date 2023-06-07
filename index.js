@@ -41,8 +41,8 @@ async function run() {
             const query = { email: user.email };
             const existingUser = await AllUsersCollection.findOne(query);
             if (existingUser) {
-                res.status(200).json({
-                    status: "success",
+                return res.status(200).json({
+                    status: "false",
                     data: "user already exits"
                 })
             }
@@ -53,10 +53,16 @@ async function run() {
             })
         })
 
+        // get all user 
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const result = await AllUsersCollection.find().toArray();
+            res.send(result)
+        })
+
 
     } finally {
-        // Ensures that the client will close when you finish/error
-        // await client.close();
+
     }
 }
 run().catch(console.dir);
