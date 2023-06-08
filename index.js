@@ -260,9 +260,22 @@ async function run() {
 
         // ------------------ code about selected class ------------ //
 
+        // add selected class in db 
         app.post('/selectedclass', verifyJWT, async (req, res) => {
             const data = req.body;
             const result = await SelectedClassCollection.insertOne(data)
+            res.send({ result })
+        })
+
+        // get all selected class
+        app.get('/selectedclass', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            let query = {};
+            if (email) {
+                query = { studentemail: email }
+            }
+            const result = await SelectedClassCollection.find(query).toArray();
             res.send({ result })
         })
 
