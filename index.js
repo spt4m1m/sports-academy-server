@@ -200,6 +200,26 @@ async function run() {
             }
         });
 
+        // get single class 
+        app.get('/classes/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await AllClassCollection.findOne(query);
+            res.send({ result })
+        })
+
+        // add feedback in class 
+        app.put('/classes/feedback/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const feedbackmsg = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: { feedback: feedbackmsg.feedbackmsg }
+            }
+            const result = await AllClassCollection.updateOne(filter, updatedDoc);
+            res.send({ result })
+        })
+
 
     } finally {
 
