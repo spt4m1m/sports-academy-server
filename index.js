@@ -171,9 +171,13 @@ async function run() {
         // get all class 
         app.get('/classes', async (req, res) => {
             const email = req.query.email;
+            const status = req.query.status;
             let query = {};
             if (email) {
                 query = { instructoremail: email }
+            }
+            if (status == "approved") {
+                query = { status: "approved" }
             }
             const result = await AllClassCollection.find(query).toArray();
             res.send(result)
