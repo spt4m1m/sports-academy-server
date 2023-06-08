@@ -201,11 +201,35 @@ async function run() {
         });
 
         // get single class 
-        app.get('/classes/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        app.get('/classes/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await AllClassCollection.findOne(query);
             res.send({ result })
+        })
+
+        // update a single class 
+        app.patch('/classes/update/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+            const filter = { _id: new ObjectId(id) }
+            console.log(data);
+            const updatedDoc = {
+                $set: {
+                    classname: data.classname,
+                    classimg: data.classimg,
+                    instructorname: data.instructorname,
+                    instructoremail: data.instructoremail,
+                    availableseat: data.availableseat,
+                    price: data.price,
+                    status: data.status
+                },
+                $unset: {
+                    feedback: ""
+                }
+            }
+            const result = await AllClassCollection.updateOne(filter, updatedDoc);
+            res.send({ result });
         })
 
         // add feedback in class 
