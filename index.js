@@ -56,6 +56,7 @@ async function run() {
         // database
         const AllUsersCollection = client.db("sportsacademydb").collection("Users");
         const AllClassCollection = client.db("sportsacademydb").collection("Classes");
+        const SelectedClassCollection = client.db("sportsacademydb").collection("SelectedClass");
 
         // jwt
         app.post('/jwt', (req, res) => {
@@ -75,6 +76,8 @@ async function run() {
             next();
         }
 
+
+        // ------------------ code about user ------------ //
         // add a user to db 
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -160,6 +163,11 @@ async function run() {
             const result = await AllUsersCollection.deleteOne(query);
             res.send(result)
         })
+
+        // ------------------ code end about user ------------ //
+
+
+        // ------------------ code about class ------------ //
 
         // add a class in db 
         app.post('/classes', async (req, res) => {
@@ -247,6 +255,19 @@ async function run() {
             const result = await AllClassCollection.updateOne(filter, updatedDoc);
             res.send({ result })
         })
+
+        // ------------------ code end about class ------------ //
+
+        // ------------------ code about selected class ------------ //
+
+        app.post('/selectedclass', verifyJWT, async (req, res) => {
+            const data = req.body;
+            const result = await SelectedClassCollection.insertOne(data)
+            res.send({ result })
+        })
+
+
+        // ------------------ code end about selected class ------------ //
 
 
     } finally {
