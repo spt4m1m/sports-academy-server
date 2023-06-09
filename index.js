@@ -101,12 +101,19 @@ async function run() {
             const query = { _id: { $in: payment.classesId.map(id => new ObjectId(id)) } }
             const enrolledclasses = await SelectedClassCollection.find(query).toArray();
 
+            // update class enrolled increase or availableseat decrease by 1 
+            const names = payment.classesName.map(name => (name));
+            const updatedDoc = {
+                $inc: { availableseat: -1, enrolled: 1 }
+            }
+            const updateClass = await AllClassCollection.updateMany({ classname: { $in: names } }, updatedDoc);
+
             // save enrolled class in db 
             const enrolledclassresult = await EnrolledClassCollection.insertMany(enrolledclasses);
 
             // delete selected class 
             const deletedResult = await SelectedClassCollection.deleteMany(query);
-            res.send({ result, deletedResult, enrolledclassresult })
+            res.send({ result, deletedResult, enrolledclassresult, updateClass })
         })
 
         // get all enrolled class
