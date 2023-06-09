@@ -114,6 +114,14 @@ async function run() {
             // delete selected class 
             const deletedResult = await SelectedClassCollection.deleteMany(query);
             res.send({ result, deletedResult, enrolledclassresult, updateClass })
+        });
+
+        // get all payment history 
+        app.get('/paymenthistory', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const query = { paymentuser: email }
+            const result = await PaymentCollection.find(query).toArray();
+            res.send(result)
         })
 
         // get all enrolled class
