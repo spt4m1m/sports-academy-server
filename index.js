@@ -200,6 +200,14 @@ async function run() {
             res.send(result)
 
         })
+
+
+        // get all instructor 
+        app.get('/instructors', verifyJWT, async (req, res) => {
+            const query = { role: 'instructor' };
+            const result = await AllUsersCollection.find(query).toArray();
+            res.send(result)
+        })
         // remove instructor
         app.put('/users/removeinstructor/:email', async (req, res) => {
             const email = req.params.email;
