@@ -203,7 +203,7 @@ async function run() {
 
 
         // get all instructor 
-        app.get('/instructors', verifyJWT, async (req, res) => {
+        app.get('/instructors', async (req, res) => {
             const query = { role: 'instructor' };
             const result = await AllUsersCollection.find(query).toArray();
             res.send(result)
@@ -251,7 +251,7 @@ async function run() {
             if (status == "approved") {
                 query = { status: "approved" }
             }
-            const result = await AllClassCollection.find(query).toArray();
+            const result = await AllClassCollection.find(query).sort({ enrolled: -1 }).toArray();
             res.send(result)
         })
 
