@@ -109,6 +109,14 @@ async function run() {
             res.send({ result, deletedResult, enrolledclassresult })
         })
 
+        // get all enrolled class
+        app.get('/enrolledclass', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const query = { studentemail: email };
+            const result = await EnrolledClassCollection.find(query).toArray();
+            res.send(result)
+        })
+
 
         // ------------------ code about user ------------ //
         // add a user to db 
