@@ -59,6 +59,7 @@ async function run() {
         const AllClassCollection = client.db("sportsacademydb").collection("Classes");
         const SelectedClassCollection = client.db("sportsacademydb").collection("SelectedClass");
         const PaymentCollection = client.db("sportsacademydb").collection("Payments");
+        const EnrolledClassCollection = client.db("sportsacademydb").collection("EnrolledClass");
 
         // jwt
         app.post('/jwt', (req, res) => {
@@ -98,9 +99,14 @@ async function run() {
             const payment = req.body;
             const result = await PaymentCollection.insertOne(payment);
             const query = { _id: { $in: payment.classesId.map(id => new ObjectId(id)) } }
-            const deletedResult = await SelectedClassCollection.deleteMany(query);
+            const enrolledclasses = await SelectedClassCollection.find(query).toArray();
 
-            res.send({ result, deletedResult })
+            // save enrolled class in db 
+            const enrolledclassresult = await EnrolledClassCollection.insertMany(enrolledclasses);
+
+            // delete selected class 
+            const deletedResult = await SelectedClassCollection.deleteMany(query);
+            res.send({ result, deletedResult, enrolledclassresult })
         })
 
 
