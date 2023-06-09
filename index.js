@@ -58,6 +58,7 @@ async function run() {
         const AllUsersCollection = client.db("sportsacademydb").collection("Users");
         const AllClassCollection = client.db("sportsacademydb").collection("Classes");
         const SelectedClassCollection = client.db("sportsacademydb").collection("SelectedClass");
+        const PaymentCollection = client.db("sportsacademydb").collection("Payments");
 
         // jwt
         app.post('/jwt', (req, res) => {
@@ -77,7 +78,7 @@ async function run() {
             next();
         }
 
-        // payment api 
+        // ------------------ payment related  api ----------------------//
         app.post("/create-payment-intent", async (req, res) => {
             const { price } = req.body;
             const amount = price * 100
@@ -91,6 +92,16 @@ async function run() {
                 clientSecret: paymentIntent.client_secret,
             });
         });
+
+        // save payment to db 
+        app.post('/payments', verifyJWT, async (req, res) => {
+            const payment = req.body;
+            const result = await PaymentCollection.insertOne(payment);
+            const query = { _id: { $in: payment.classesId.map(id => new ObjectId(id)) } }
+            const deletedResult = await SelectedClassCollection.deleteMany(query);
+
+            res.send({ result, deletedResult })
+        })
 
 
         // ------------------ code about user ------------ //
@@ -241,7 +252,6 @@ async function run() {
             const id = req.params.id;
             const data = req.body;
             const filter = { _id: new ObjectId(id) }
-            console.log(data);
             const updatedDoc = {
                 $set: {
                     classname: data.classname,
@@ -286,7 +296,6 @@ async function run() {
         // get all selected class
         app.get('/selectedclass', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            console.log(email);
             let query = {};
             if (email) {
                 query = { studentemail: email }
