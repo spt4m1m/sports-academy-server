@@ -263,6 +263,14 @@ async function run() {
             }
             const result = await AllClassCollection.find(query).sort({ enrolled: -1 }).toArray();
             res.send(result)
+        });
+
+        // get instructor classes 
+        app.get('/instructorclasses', verifyJWT, verifyInstructor, async (req, res) => {
+            const email = req.query.email;
+            const query = { instructoremail: email };
+            const result = await AllClassCollection.find(query).toArray();
+            res.send(result)
         })
 
         // change class status 
