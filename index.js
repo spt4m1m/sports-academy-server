@@ -78,6 +78,16 @@ async function run() {
             }
             next();
         }
+        // instructor verify 
+        const verifyInstructor = async (req, res, next) => {
+            const email = req.decoded.email;
+            const query = { email: email }
+            const user = await AllUsersCollection.findOne(query);
+            if (user?.role !== 'instructor') {
+                return res.status(403).send({ error: true, message: 'forbidden message' });
+            }
+            next();
+        }
 
         // ------------------ payment related  api ----------------------//
         app.post("/create-payment-intent", async (req, res) => {
@@ -167,7 +177,7 @@ async function run() {
         })
 
         // create admin
-        app.put('/users/admin/:email', async (req, res) => {
+        app.put('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email }
             const updatedDoc = {
@@ -178,7 +188,7 @@ async function run() {
 
         })
         // remove admin
-        app.put('/users/removeadmin/:email', async (req, res) => {
+        app.put('/users/removeadmin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email }
             const updatedDoc = {
@@ -190,7 +200,7 @@ async function run() {
         })
 
         // create instructor
-        app.put('/users/instructor/:email', async (req, res) => {
+        app.put('/users/instructor/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email }
             const updatedDoc = {
@@ -209,7 +219,7 @@ async function run() {
             res.send(result)
         })
         // remove instructor
-        app.put('/users/removeinstructor/:email', async (req, res) => {
+        app.put('/users/removeinstructor/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email }
             const updatedDoc = {
@@ -221,7 +231,7 @@ async function run() {
         })
 
         // delete a user 
-        app.delete('/users/:id', async (req, res) => {
+        app.delete('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await AllUsersCollection.deleteOne(query);
@@ -234,7 +244,7 @@ async function run() {
         // ------------------ code about class ------------ //
 
         // add a class in db 
-        app.post('/classes', async (req, res) => {
+        app.post('/classes', verifyJWT, verifyInstructor, async (req, res) => {
             const data = req.body;
             const result = await AllClassCollection.insertOne(data)
             res.send({ result })
@@ -256,7 +266,7 @@ async function run() {
         })
 
         // change class status 
-        app.put('/classes/:id', async (req, res) => {
+        app.put('/classes/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const status = req.query.status;
             const filter = { _id: new ObjectId(id) };
@@ -285,7 +295,7 @@ async function run() {
         })
 
         // update a single class 
-        app.patch('/classes/update/:id', verifyJWT, async (req, res) => {
+        app.patch('/classes/update/:id', verifyJWT, verifyInstructor, async (req, res) => {
             const id = req.params.id;
             const data = req.body;
             const filter = { _id: new ObjectId(id) }
